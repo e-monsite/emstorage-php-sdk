@@ -55,40 +55,30 @@ TODO: one doc file per resource
 #### ObjectClient
 
 - Create a file (it will throw an exception if the file already exist - TODO)
-```
-<?php
-
+```php
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->create($path, $content);
 ```
 
 - Update a file (it will throw an exception if the file doesn't exist - TODO)
-```
-<?php
-
+```php
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->update($path, $content);
 ```
 
 - Delete a file (it will throw an exception if the file doesn't exist - TODO)
-```
-<?php
-
+```php
 $emStorage->object->delete($path);
 ```
 
 - Get a file metadatas
-```
-<?php
-
+```php
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->getObject($path);
 ```
 
 - Get a list
-```
-<?php
-
+```php
 /** @var Collection|ObjectSummaryInterface[] $files **/
 $files = $emStorage->object->getObjects($offset = 0, $limit = 5);
 ```
@@ -96,9 +86,7 @@ $files = $emStorage->object->getObjects($offset = 0, $limit = 5);
 **You also can work with models (ObjectSummaryInterface)**
 
 - Create a file
-```
-<?php
-
+```php
 $file = new EmObject();
 $file->setFilename($path);
 $remoteFile = $emStorage->object->createFromObject($file);
@@ -160,9 +148,7 @@ interface ObjectSummaryInterface
 
 A collection of ObjectSummaryInterface.
 
-```
-<?php 
-
+```php
 class Collection implements \ArrayAccess, \Countable, \Iterator
 {
 }
@@ -170,9 +156,7 @@ class Collection implements \ArrayAccess, \Countable, \Iterator
 
 It also provide *nav* and *links* properties:
  
-```
-<?php
-
+```php
 $files = $emStorage->object->getObjects();
 
 print_r($files->getNav());
