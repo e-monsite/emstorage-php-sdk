@@ -1,0 +1,30 @@
+{
+  "name": "emstorage/php-sdk",
+  "authors": [
+    {
+      "name": "John",
+      "email": "jonathan@e-monsite.com"
+    }
+  ],
+  "require": {
+    "symfony/serializer": "^3.1",
+    "symfony/property-info": "^3.1",
+    "symfony/property-access": "^3.1",
+    "awelty/security": "dev-master",
+    "guzzlehttp/guzzle": "^6.2"
+  },
+  "repositories": [
+    {
+      "url": "https://bitbucket.org/awelty/security",
+      "type": "git"
+    }
+  ],
+  "suggest": {
+    "league/flysystem": "For using Flysystem adapter"
+  },
+  "autoload": {
+    "psr-4": {
+      "Emonsite\\Emstorage\\PhpSdk\\": "src"
+    }
+  }
+}
