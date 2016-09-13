@@ -15,7 +15,7 @@ You can use the service provider:
 ```
 <?php 
 
-use Awelty\EmStorage\Bridge\SilexServiceProvider as EmStorageServiceProvider;
+use Emonsite\Emstorage\PhpSdk\Bridge as EmStorageServiceProvider;
 
 $app->register(new EmStorageServiceProvider(), [
     'emstorage.applications' => [
@@ -37,8 +37,8 @@ For each applications it will create a service named "emstorage.*yourAppName*.cl
 ```
 <?php 
 
-use Awelty\EmStorage\Security\HmacAuthenticator;
-use Awelty\EmStorage\Client;
+use Awelty\Component\Security\HmacAuthenticator;
+use Emonsite\Emstorage\PhpSdk\Client;
 
 // Emstorage use hmac authentification with sha1 as algo
 $authenticator = new HmacAuthenticator($publicKey, $privateKey, 'sha1');
@@ -51,44 +51,54 @@ $emStorage = new Client($authenticator, $someGuzzleConfig = []);
 
 The client has one subclient per resource in EmStorage.
 TODO: one doc file per resource
- 
+
 #### ObjectClient
 
 - Create a file (it will throw an exception if the file already exist - TODO)
 ```
+<?php
+
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->create($path, $content);
 ```
 
 - Update a file (it will throw an exception if the file doesn't exist - TODO)
 ```
+<?php
+
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->update($path, $content);
 ```
 
 - Delete a file (it will throw an exception if the file doesn't exist - TODO)
 ```
+<?php
+
 $emStorage->object->delete($path);
 ```
 
 - Get a file metadatas
 ```
+<?php
+
 /** @var ObjectSummaryInterface $file **/
 $file = $emStorage->object->getObject($path);
 ```
 
 - Get a list
 ```
+<?php
+
 /** @var Collection|ObjectSummaryInterface[] $files **/
 $files = $emStorage->object->getObjects($offset = 0, $limit = 5);
 ```
-
-
 
 **You also can work with models (ObjectSummaryInterface)**
 
 - Create a file
 ```
+<?php
+
 $file = new EmObject();
 $file->setFilename($path);
 $remoteFile = $emStorage->object->createFromObject($file);
@@ -104,6 +114,8 @@ Feel free to exlore the client with your IDE to find some other methods to creat
 This is the interface you work with when you send files.
 
 ```
+<?php
+
 interface ObjectSummaryInterface
 {
     /**
@@ -149,6 +161,8 @@ interface ObjectSummaryInterface
 A collection of ObjectSummaryInterface.
 
 ```
+<?php 
+
 class Collection implements \ArrayAccess, \Countable, \Iterator
 {
 }
@@ -157,6 +171,8 @@ class Collection implements \ArrayAccess, \Countable, \Iterator
 It also provide *nav* and *links* properties:
  
 ```
+<?php
+
 $files = $emStorage->object->getObjects();
 
 print_r($files->getNav());
