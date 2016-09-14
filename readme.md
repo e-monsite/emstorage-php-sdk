@@ -37,11 +37,11 @@ For each applications it will create a service named "emstorage.*yourAppName*.cl
 ```
 <?php 
 
-use Awelty\Component\Security\HmacAuthenticator;
+use Awelty\Component\Security\HmacSignatureProvider;
 use Emonsite\Emstorage\PhpSdk\Client;
 
 // Emstorage use hmac authentification with sha1 as algo
-$authenticator = new HmacAuthenticator($publicKey, $privateKey, 'sha1');
+$signatureProvider = new HmacSignatureProvider($publicKey, $privateKey, 'sha1');
 
 // create as many clients as you need (typically one per EmStorageApplication)
 $emStorage = new Client($authenticator, $someGuzzleConfig = []);
