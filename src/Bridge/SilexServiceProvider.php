@@ -21,23 +21,23 @@ class SilexServiceProvider implements ServiceProviderInterface, BootableProvider
         /**
          * Options pour construire le client Guzzle
          */
-        $container['guzzle.options'] = [];
+        $container['emstorage.guzzle.options'] = [];
     }
 
     public function boot(Application $app)
     {
         // "force" base_uri
-        $options = $app['guzzle.options'];
+        $options = $app['emstorage.guzzle.options'];
         $options['base_uri'] = 'https://api.emstorage.com';
 
-        $app['guzzle.options'] = $options;
+        $app['emstorage.guzzle.options'] = $options;
 
         // create services
         foreach ($app['emstorage.applications'] as $name => $config) {
             $authenticator = new HmacSignatureProvider($config['public_key'], $config['private_key'], 'sha1');
 
             $app['emstorage.'.$name.'.client'] = function (Container $container) use ($authenticator) {
-                return new Client($authenticator, $container['guzzle.options']);
+                return new Client($authenticator, $container['emstorage.guzzle.options']);
             };
         }
     }
