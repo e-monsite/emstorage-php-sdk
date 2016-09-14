@@ -2,7 +2,6 @@
 
 namespace Emonsite\Emstorage\PhpSdk\Client;
 
-use Awelty\Component\Security\HmacAuthenticator;
 use Emonsite\Emstorage\PhpSdk\Exception\ResponseException;
 use Emonsite\Emstorage\PhpSdk\Model\Collection;
 use Emonsite\Emstorage\PhpSdk\Model\EmObject;
@@ -54,7 +53,6 @@ class ObjectClient extends AbstractClient
                 'body' => $content,
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
-                    HmacAuthenticator::SIGNATURE_SKIP_BODY_HEADER => true,
                 ]
             ]);
         } catch (RequestException $e) {
