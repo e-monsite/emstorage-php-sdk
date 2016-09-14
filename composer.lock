@@ -13,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://bitbucket.org/awelty/security",
-                "reference": "87bccbb4f9a83bb07c16a6aa6e5d991f59b1f958"
+                "reference": "3bd8705e0a1e0bc798e8ddc6b59c2a905113f5d0"
             },
             "require": {
                 "guzzlehttp/psr7": "^1.3"
@@ -31,7 +31,7 @@
                 }
             ],
             "description": "Some security stuff like hmac authentification manager",
-            "time": "2016-09-14 09:03:50"
+            "time": "2016-09-14 12:39:33"
         },
         {
             "name": "guzzlehttp/guzzle",
