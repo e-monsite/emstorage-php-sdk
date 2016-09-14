@@ -2,8 +2,8 @@
 
 namespace Emonsite\Emstorage\PhpSdk;
 
-use Awelty\Component\Security\AuthenticatorInterface;
-use Awelty\Component\Security\Middleware;
+use Awelty\Component\Security\HmacSignatureProvider;
+use Awelty\Component\Security\MiddlewareProvider;
 use Emonsite\Emstorage\PhpSdk\Client\ApplicationClient;
 use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
 use Emonsite\Emstorage\PhpSdk\Normalizer\ApplicationNormalizer;
@@ -19,11 +19,6 @@ use Symfony\Component\Serializer\Serializer;
 class Client
 {
     /**
-     * @var AuthenticatorInterface
-     */
-    private $authenticator;
-
-    /**
      * @var ApplicationClient
      */
     public $application;
@@ -33,15 +28,14 @@ class Client
      */
     public $object;
 
-    public function __construct(AuthenticatorInterface $authenticator, $guzzleOptions = [])
+    public function __construct(HmacSignatureProvider $hmacSignatureProvider, $guzzleOptions = [])
     {
-        $this->authenticator = $authenticator;
         $serializer = $this->createSerializer();
 
         // Création du handler
         //---------------------
         $handler = HandlerStack::create();
-        $handler->push(Middleware::authenticateMiddleware($authenticator));
+        $handler->push(MiddlewareProvider::signRequestMiddleware($hmacSignatureProvider));
 
         if (isset($guzzleOptions['handler'])) {
             throw new \Exception('Do you really need to set an handler ?');
