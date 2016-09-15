@@ -18,6 +18,8 @@ use Symfony\Component\Serializer\Serializer;
 
 class Client
 {
+    const BASE_URI = 'https://api.emstorage.com';
+
     /**
      * @var ApplicationClient
      */
@@ -30,21 +32,23 @@ class Client
 
     public function __construct(HmacSignatureProvider $hmacSignatureProvider, $guzzleOptions = [])
     {
-        $serializer = $this->createSerializer();
-
-        // Création du handler
-        //---------------------
-        $handler = HandlerStack::create();
+        // Handler
+        //---------
+        $handler = !empty($guzzleOptions['handler']) ? $guzzleOptions['handler'] : HandlerStack::create();
         $handler->push(MiddlewareProvider::signRequestMiddleware($hmacSignatureProvider));
-
-        if (isset($guzzleOptions['handler'])) {
-            throw new \Exception('Do you really need to set an handler ?');
-        }
 
         $guzzleOptions['handler'] = $handler;
 
+        // set a base_uri if not provided
+        //--------------------------------
+        if (empty($guzzleOptions['base_uri'])) {
+            $guzzleOptions['base_uri'] = self::BASE_URI;
+        }
+
         // Création des clients
         //----------------------
+        $serializer = $this->createSerializer();
+
         $client = new HttpClient($guzzleOptions);
 
         $this->application = new ApplicationClient($client, $serializer);

@@ -4,7 +4,10 @@ PHP SDK for http://fr.emstorage.com
 
 ## Install
 
-TODO
+```
+composer require emstorage/php-sdk:dev-master
+```
+A stable version will eventually be released one day...
 
 ### Create a client
 
@@ -30,7 +33,7 @@ $app->register(new EmStorageServiceProvider(), [
 ]);
 ```
 
-For each applications it will create a service named "emstorage.*yourAppName*.client"
+For each applications it will create a service named "emstorage.*yourAppName*"
 
 #### Or manually
 

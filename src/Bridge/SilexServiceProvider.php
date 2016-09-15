@@ -26,17 +26,11 @@ class SilexServiceProvider implements ServiceProviderInterface, BootableProvider
 
     public function boot(Application $app)
     {
-        // "force" base_uri
-        $options = $app['emstorage.guzzle.options'];
-        $options['base_uri'] = 'https://api.emstorage.com';
-
-        $app['emstorage.guzzle.options'] = $options;
-
         // create services
         foreach ($app['emstorage.applications'] as $name => $config) {
             $authenticator = new HmacSignatureProvider($config['public_key'], $config['private_key'], 'sha1');
 
-            $app['emstorage.'.$name.'.client'] = function (Container $container) use ($authenticator) {
+            $app['emstorage.'.$name] = function (Container $container) use ($authenticator) {
                 return new Client($authenticator, $container['emstorage.guzzle.options']);
             };
         }
