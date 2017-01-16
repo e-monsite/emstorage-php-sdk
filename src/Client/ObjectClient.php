@@ -59,7 +59,6 @@ class ObjectClient extends AbstractClient
             throw new ResponseException($e);
         }
 
-
         return $this->serializer->deserialize($response->getBody(), EmObject::class, 'json');
     }
 
@@ -115,12 +114,11 @@ class ObjectClient extends AbstractClient
 
     /**
      * @param $path
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function delete($path)
     {
         $object = $this->getObject($path);
-        return $this->deleteFromObject($object);
+        $this->deleteFromObject($object);
     }
 
     /**
@@ -131,7 +129,7 @@ class ObjectClient extends AbstractClient
     public function deleteFromObject(ObjectSummaryInterface $objectSummary)
     {
         try {
-            return $this->client->delete('/objects/'.$objectSummary->getId());
+            $this->client->delete('/objects/'.$objectSummary->getId());
         } catch (RequestException $e) {
             throw new ResponseException($e);
         }
