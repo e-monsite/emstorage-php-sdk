@@ -7,9 +7,11 @@ use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
 use Psr\Http\Message\StreamInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
+/**
+ * TODO throw AdapterException quand elle existera..
+ * https://github.com/thephpleague/flysystem/issues/620
+ */
 class FlysystemAdapter implements AdapterInterface
 {
     /**
@@ -17,15 +19,9 @@ class FlysystemAdapter implements AdapterInterface
      */
     private $client;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(Client $client, LoggerInterface $logger = null)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->logger = $logger;
     }
 
 
@@ -44,7 +40,7 @@ class FlysystemAdapter implements AdapterInterface
             $object = $this->client->object->create($path, $contents);
             return ['path' => $path];
         } catch (EmStorageException $e) {
-            $this->logException($e);
+            throw $e;
             return false;
         }
     }
@@ -78,7 +74,7 @@ class FlysystemAdapter implements AdapterInterface
             $object = $this->client->object->update($path, $contents);
             return ['path' => $path];
         } catch (EmStorageException $e) {
-            $this->logException($e);
+            throw $e;
             return false;
         }
     }
@@ -137,7 +133,7 @@ class FlysystemAdapter implements AdapterInterface
             $this->client->object->delete($path);
             return true;
         } catch (EmStorageException $e) {
-            $this->logException($e);
+            throw $e;
             return false;
         }
     }
@@ -287,22 +283,5 @@ class FlysystemAdapter implements AdapterInterface
     public function getVisibility($path)
     {
         // TODO: Implement getVisibility() method.
-    }
-
-    /**
-     * @param $level
-     * @param $message
-     * @param array $context
-     */
-    private function log($level, $message, $context = [])
-    {
-        if ($this->logger) {
-            $this->logger->log($level, $message, $context);
-        }
-    }
-
-    private function logException(\Exception $e)
-    {
-        $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
     }
 }
