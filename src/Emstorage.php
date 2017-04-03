@@ -5,35 +5,43 @@ namespace Emonsite\Emstorage\PhpSdk;
 use Awelty\Component\Security\HmacSignatureProvider;
 use Awelty\Component\Security\MiddlewareProvider;
 use Emonsite\Emstorage\PhpSdk\Client\ApplicationClient;
-use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
+use Emonsite\Emstorage\PhpSdk\Client\ContainersClient;
+use Emonsite\Emstorage\PhpSdk\Client\ObjectsClient;
 use Emonsite\Emstorage\PhpSdk\Normalizer\ApplicationNormalizer;
 use Emonsite\Emstorage\PhpSdk\Normalizer\CollectionNormalizer;
 use Emonsite\Emstorage\PhpSdk\Normalizer\ObjectNormalizer;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as HttpClient;
+use Mimey\MimeTypes;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as DefaultObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class Client
+class Emstorage
 {
     const BASE_URI = 'https://api.emstorage.com';
 
     /**
-     * @var ApplicationClient
+     * @var ApplicationClient|null
      */
-    public $application;
+    private $application;
 
     /**
-     * @var ObjectClient
+     * @var ObjectsClient[]
      */
-    public $object;
+    private $objects = [];
 
-    public function __construct(HmacSignatureProvider $hmacSignatureProvider, $guzzleOptions = [])
+    /**
+     * @var ContainersClient
+     */
+    private $containers;
+
+    public function __construct($publicKey, $privateKey, $guzzleOptions = [])
     {
         // Handler
         //---------
+        $hmacSignatureProvider = new HmacSignatureProvider($publicKey, $privateKey, 'sha1');
         $handler = !empty($guzzleOptions['handler']) ? $guzzleOptions['handler'] : HandlerStack::create();
         $handler->push(MiddlewareProvider::signRequestMiddleware($hmacSignatureProvider));
 
@@ -45,15 +53,46 @@ class Client
             $guzzleOptions['base_uri'] = self::BASE_URI;
         }
 
-        // Création des clients
-        //----------------------
-        $serializer = $this->createSerializer();
-
-        $client = new HttpClient($guzzleOptions);
-
-        $this->application = new ApplicationClient($client, $serializer);
-        $this->object = new ObjectClient($client, $serializer);
+        $this->client = new HttpClient($guzzleOptions);
     }
+
+    public function application()
+    {
+        $serializer = new Serializer([], [new JsonEncoder()]);
+
+        return $this->application ?: $this->application = new ApplicationClient($this->client, $serializer);
+    }
+
+    public function containers()
+    {
+        $serializer = new Serializer([], [new JsonEncoder()]);
+
+        return $this->containers ?: $this->containers = new ContainersClient($this->client, $serializer);
+    }
+
+    /**
+     * @param $containerName
+     * @return ObjectsClient
+     */
+    public function objects($containerName)
+    {
+        if (!isset($this->objects[$containerName])) {
+            $container = $this->containers()->findOneBy(['name' => $containerName]);
+
+            if (!$container) {
+                throw new \InvalidArgumentException(sprintf('Container "%s" not found', $containerName));
+            }
+
+            $serializer = new Serializer([], [new JsonEncoder()]);
+
+            $this->objects[$containerName] = new ObjectsClient($this->client, $serializer, new MimeTypes(), $container['id']);
+        }
+
+        return $this->objects[$containerName];
+    }
+
+
+
 
     /**
      * @return Serializer

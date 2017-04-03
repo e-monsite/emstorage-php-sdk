@@ -2,7 +2,7 @@
 
 namespace Emonsite\Emstorage\PhpSdk\Bridge;
 
-use Emonsite\Emstorage\PhpSdk\Client;
+use Emonsite\Emstorage\PhpSdk\Client\ObjectsClient;
 use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
@@ -15,11 +15,11 @@ use Psr\Http\Message\StreamInterface;
 class FlysystemAdapter implements AdapterInterface
 {
     /**
-     * @var Client
+     * @var ObjectsClient
      */
     private $client;
 
-    public function __construct(Client $client)
+    public function __construct(ObjectsClient $client)
     {
         $this->client = $client;
     }
@@ -37,7 +37,7 @@ class FlysystemAdapter implements AdapterInterface
     public function write($path, $contents, Config $config)
     {
         try {
-            $object = $this->client->object->create($path, $contents);
+            $object = $this->client->create($path, $contents);
             return ['path' => $path];
         } catch (EmStorageException $e) {
             throw $e;
@@ -71,7 +71,7 @@ class FlysystemAdapter implements AdapterInterface
     public function update($path, $contents, Config $config)
     {
         try {
-            $object = $this->client->object->update($path, $contents);
+            $object = $this->client->update($path, $contents);
             return ['path' => $path];
         } catch (EmStorageException $e) {
             throw $e;
@@ -103,8 +103,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function rename($path, $newpath)
     {
-        $this->copy($path, $newpath);
-        return $this->delete($path);
+        // TODO ?
     }
 
     /**
@@ -117,7 +116,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function copy($path, $newpath)
     {
-        throw new \Exception('implement copy in Emstorage client !');
+        // TODO ?
     }
 
     /**
@@ -130,7 +129,7 @@ class FlysystemAdapter implements AdapterInterface
     public function delete($path)
     {
         try {
-            $this->client->object->delete($path);
+            $this->client->delete($path);
             return true;
         } catch (EmStorageException $e) {
             throw $e;
@@ -185,7 +184,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function has($path)
     {
-        return $this->client->object->hasObject($path);
+        return $this->client->has($path);
     }
 
     /**
