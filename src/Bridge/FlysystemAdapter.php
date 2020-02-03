@@ -2,7 +2,8 @@
 
 namespace Emonsite\Emstorage\PhpSdk\Bridge;
 
-use Emonsite\Emstorage\PhpSdk\Client;
+use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
+use Emonsite\Emstorage\PhpSdk\Emstorage;
 use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
@@ -15,48 +16,43 @@ use Psr\Http\Message\StreamInterface;
 class FlysystemAdapter implements AdapterInterface
 {
     /**
-     * @var Client
+     * @var ObjectClient
      */
-    private $client;
+    private $objectClient;
 
-    public function __construct(Client $client)
+    public function __construct(ObjectClient $objectClient)
     {
-        $this->client = $client;
+        $this->objectClient = $objectClient;
     }
-
 
     /**
      * Write a new file.
      *
      * @param string $path
-     * @param string | resource | StreamInterface $contents
-     * @param Config $config Config object
+     * @param string $contents
+     * @param Config $config   Config object
      *
      * @return array|false false on failure file meta data on success
      */
     public function write($path, $contents, Config $config)
     {
-        try {
-            $object = $this->client->object->create($path, $contents);
-            return ['path' => $path];
-        } catch (EmStorageException $e) {
-            throw $e;
-            return false;
-        }
+        return $this->writeStream($path, $this->createStream($contents), $config);
     }
 
     /**
      * Write a new file using a stream.
      *
-     * @param string $path
+     * @param string   $path
      * @param resource $resource
-     * @param Config $config Config object
+     * @param Config   $config   Config object
      *
      * @return array|false false on failure file meta data on success
      */
     public function writeStream($path, $resource, Config $config)
     {
-        return $this->write($path, $resource, $config);
+        $object = $this->objectClient->createStream($path, $resource, $config->get('mime'));
+
+        return ['path' => $object->getFilename()];
     }
 
     /**
@@ -64,19 +60,13 @@ class FlysystemAdapter implements AdapterInterface
      *
      * @param string $path
      * @param string $contents
-     * @param Config $config Config object
+     * @param Config $config   Config object
      *
      * @return array|false false on failure file meta data on success
      */
     public function update($path, $contents, Config $config)
     {
-        try {
-            $object = $this->client->object->update($path, $contents);
-            return ['path' => $path];
-        } catch (EmStorageException $e) {
-            throw $e;
-            return false;
-        }
+        return $this->updateStream($path, $this->createStream($contents), $config);
     }
 
     /**
@@ -90,7 +80,9 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function updateStream($path, $resource, Config $config)
     {
-        return $this->update($path, $resource, $config);
+        $object = $this->objectClient->updateStream($path, $resource);
+
+        return ['path' => $object->getFilename()];
     }
 
     /**
@@ -103,8 +95,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function rename($path, $newpath)
     {
-        $this->copy($path, $newpath);
-        return $this->delete($path);
+        throw new \Exception('implement rename in Emstorage client !');
     }
 
     /**
@@ -117,7 +108,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function copy($path, $newpath)
     {
-        throw new \Exception('implement copy in Emstorage client !');
+        throw new \Exception('implement copy (or move) in Emstorage client !');
     }
 
     /**
@@ -129,13 +120,11 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function delete($path)
     {
-        try {
-            $this->client->object->delete($path);
-            return true;
-        } catch (EmStorageException $e) {
-            throw $e;
-            return false;
+        if ($this->has($path)) {
+            $this->objectClient->deleteFromPath($path);
         }
+
+        return true;
     }
 
     /**
@@ -147,7 +136,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function deleteDir($dirname)
     {
-        // TODO: Implement deleteDir() method.
+        throw new \Exception('deleteDir is not supported by emstorage');
     }
 
     /**
@@ -160,7 +149,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function createDir($dirname, Config $config)
     {
-        // TODO: Implement createDir() method.
+        throw new \Exception('createDir is not supported by emstorage');
     }
 
     /**
@@ -173,7 +162,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function setVisibility($path, $visibility)
     {
-        // TODO: Implement setVisibility() method.
+        throw new \Exception('setVisibility is not supported by emstorage');
     }
 
     /**
@@ -185,7 +174,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function has($path)
     {
-        return $this->client->object->hasObject($path);
+        return $this->objectClient->hasObject($path);
     }
 
     /**
@@ -197,7 +186,7 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function read($path)
     {
-        // TODO: Implement read() method.
+        throw new \Exception('Implement read in emstorage client !');
     }
 
     /**
@@ -209,20 +198,19 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function readStream($path)
     {
-        // TODO: Implement readStream() method.
+        throw new \Exception('Implement readStream in emstorage client !');
     }
 
     /**
-     * List contents of a directory.
+     * Get all the meta data of a file or directory.
      *
-     * @param string $directory
-     * @param bool $recursive
+     * @param string $path
      *
-     * @return array
+     * @return array|false
      */
     public function listContents($directory = '', $recursive = false)
     {
-        // TODO: Implement listContents() method.
+        throw new \Exception('listContents is not supported by emstorage');
     }
 
     /**
@@ -238,7 +226,7 @@ class FlysystemAdapter implements AdapterInterface
     }
 
     /**
-     * Get all the meta data of a file or directory.
+     * Get the size of a file.
      *
      * @param string $path
      *
@@ -282,6 +270,18 @@ class FlysystemAdapter implements AdapterInterface
      */
     public function getVisibility($path)
     {
-        // TODO: Implement getVisibility() method.
+        throw new \Exception('getVisibility is not supported by emstorage');
+    }
+
+    /**
+     * @returnresource
+     */
+    private function createStream(string $content)
+    {
+        $stream = fopen('php://temp','r+');
+        fwrite($stream, $content);
+        rewind($stream);
+
+        return $stream;
     }
 }

@@ -35,14 +35,23 @@ class ObjectClient extends AbstractClient
      */
     public function create(string $remotePath, string $localPath, string $mimeType = null): ObjectSummaryInterface
     {
+        return $this->createStream($remotePath, fopen($localPath, 'r'), $this->guessMimeType($localPath));
+    }
+
+    /**
+     * Créer le ficher avec son contenu dans le cloud
+     * Envoyer $mimeType pour le forcer (et optimiser)
+     */
+    public function createStream(string $remotePath, $resource, string $mimeType = null): ObjectSummaryInterface
+    {
         // créer l'objet vide
         $response = $this->postJson('/objects/'.$this->containerId, [
             'filename' => $remotePath,
-            'mime' => $mimeType ?: $this->guessMimeType($localPath),
+            'mime' => $mimeType ?: $this->guessMimeType($remotePath),
         ]);
 
         // post les bytes
-        $response = $this->post('/objects/'.$this->containerId.'/'.$response->toArray()['object']['id'].'/bytes', fopen($localPath, 'r'));
+        $response = $this->post('/objects/'.$this->containerId.'/'.$response->toArray()['object']['id'].'/bytes', $resource);
 
         return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
     }
@@ -52,9 +61,14 @@ class ObjectClient extends AbstractClient
      */
     public function update(string $remotePath, string $localPath): ObjectSummaryInterface
     {
-        $this->delete($remotePath);
+        return $this->updateStream($remotePath, fopen($localPath, 'r'));
+    }
 
-        return $this->create($remotePath, $localPath);
+    public function updateStream(string $remotePath, $resource): ObjectSummaryInterface
+    {
+        $this->deleteFromPath($remotePath);
+
+        return $this->createStream($remotePath, $resource);
     }
 
     /**
@@ -128,13 +142,15 @@ class ObjectClient extends AbstractClient
     private function guessMimeType($path): string
     {
         // mode "propre"
-        $mime = MimeTypes::getDefault()->guessMimeType($path);
+        if (is_readable($path)) {
+            $mime = MimeTypes::getDefault()->guessMimeType($path);
 
-        if ($mime) {
-            return $mime;
+            if ($mime) {
+                return $mime;
+            }
         }
 
-        // dernier recours, selon l'extension
+        // fallback sur du sale : selon l'extension
         $ext = pathinfo($path, \PATHINFO_EXTENSION);
 
         if ($ext) {

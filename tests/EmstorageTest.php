@@ -18,6 +18,12 @@ class EmstorageTest extends TestCase
      */
     private $temporaryFilesPaths = [];
 
+    public function setUp(): void
+    {
+        $emstorage = new Emstorage('4f4109dbe4b1bcfd9ab9e32e', 'cbcb5516247fdd5ea3ed911c');
+        $object = $emstorage->objects('5e3197152c38a522dc138aee')->createStream('coucoustream.txt', $this->createStream('prout'));
+    }
+
     public function testCreateObject()
     {
         $mockedResponses = function (string $method, string $url, array $options) {
@@ -136,5 +142,12 @@ class EmstorageTest extends TestCase
         return new Emstorage('4f4109dbe4b1bcfd9ab9e32e', 'cbcb5516247fdd5ea3ed911c', new MockHttpClient($mockedResponses, Emstorage::BASE_URI));
     }
 
+    private function createStream(string $content)
+    {
+        $stream = fopen('php://temp','r+');
+        fwrite($stream, $content);
+        rewind($stream);
 
+        return $stream;
+    }
 }
