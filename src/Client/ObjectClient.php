@@ -113,9 +113,9 @@ class ObjectClient extends AbstractClient
             ]
         ]);
 
-        $response = \GuzzleHttp\json_decode($response->getContent());
+        $response = $response->toArray();
 
-        return (bool) $response->objects;
+        return (bool) $response['objects'];
     }
 
     public function getObject(string $path): EmObject
