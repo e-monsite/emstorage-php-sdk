@@ -9,6 +9,8 @@ class EmObject implements ObjectSummaryInterface
      */
     private $id;
 
+    private $createdAt;
+
     /**
      * @var string
      */
@@ -25,7 +27,7 @@ class EmObject implements ObjectSummaryInterface
     private $mime;
 
     /**
-     * @var float
+     * @var int
      */
     private $size;
 
@@ -35,154 +37,165 @@ class EmObject implements ObjectSummaryInterface
     private $sizeHuman;
 
     /**
-     * @var array
+     * @var mixed
      */
-    private $meta = [];
+    private $customDatas;
+
+    /**
+     * @var bool
+     */
+    private $hasCustomDatas;
+
+    /**
+     * @var bool
+     */
+    private $hasFilters;
 
     /**
      * @var array TODO
      */
     private $filters = [];
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
     /**
-     * @param mixed $id
-     * @return $this
+     * @internal
      */
-    public function setId($id)
+    public function setId(string $id): EmObject
     {
         $this->id = $id;
         return $this;
     }
 
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
     /**
-     * @return string
+     * @internal
      */
-    public function getFilename()
+    public function setCreatedAt(string $createdAt)
+    {
+        $this->createdAt = $createdAt ? new \DateTimeImmutable($createdAt) : null;
+        return $this;
+    }
+
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    /**
-     * @param string $filename
-     * @return $this
-     */
-    public function setFilename($filename)
+    public function setFilename(string $filename): EmObject
     {
         $this->filename = $filename;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPublicUrl()
+    public function getPublicUrl(): ?string
     {
         return $this->publicUrl;
     }
 
     /**
-     * @param string $publicUrl
-     * @return $this
+     * @internal
      */
-    public function setPublicUrl($publicUrl)
+    public function setPublicUrl(string $publicUrl): EmObject
     {
         $this->publicUrl = $publicUrl;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getMime()
+    public function getMime(): ?string
     {
         return $this->mime;
     }
 
     /**
-     * @param string $mime
-     * @return $this
+     * @internal
      */
-    public function setMime($mime)
+    public function setMime(?string $mime): EmObject
     {
         $this->mime = $mime;
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
 
     /**
-     * @param float $size
-     * @return $this
+     * @internal
      */
-    public function setSize($size)
+    public function setSize(float $size): EmObject
     {
         $this->size = $size;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSizeHuman()
+    public function getSizeHuman(): ?string
     {
         return $this->sizeHuman;
     }
 
     /**
-     * @param string $sizeHuman
-     * @return $this
+     * @internal
      */
-    public function setSizeHuman($sizeHuman)
+    public function setSizeHuman(string $sizeHuman): EmObject
     {
         $this->sizeHuman = $sizeHuman;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getMeta()
+    public function getCustomDatas()
     {
-        return $this->meta;
+        return $this->customDatas;
     }
 
-    /**
-     * @param array $meta
-     * @return $this
-     */
-    public function setMeta($meta)
+    public function setCustomDatas($customDatas)
     {
-        $this->meta = $meta;
+        $this->customDatas = $customDatas;
         return $this;
     }
 
+    public function hasCustomDatas(): bool
+    {
+        return $this->hasCustomDatas;
+    }
+
     /**
-     * @return array
+     * @internal
      */
-    public function getFilters()
+    public function setHasCustomDatas(bool $hasCustomDatas): EmObject
+    {
+        $this->hasCustomDatas = $hasCustomDatas;
+        return $this;
+    }
+
+    public function hasFilters(): bool
+    {
+        return $this->hasFilters;
+    }
+
+    /**
+     * @internal
+     */
+    public function setHasFilters(bool $hasFilters): EmObject
+    {
+        $this->hasFilters = $hasFilters;
+        return $this;
+    }
+
+    public function getFilters(): array
     {
         return $this->filters;
     }
 
-    /**
-     * @param array $filters
-     * @return $this
-     */
-    public function setFilters($filters)
+    public function setFilters(array $filters): EmObject
     {
         $this->filters = $filters;
         return $this;

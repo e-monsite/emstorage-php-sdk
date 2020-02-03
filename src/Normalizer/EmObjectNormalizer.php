@@ -3,9 +3,9 @@
 namespace Emonsite\Emstorage\PhpSdk\Normalizer;
 
 use Emonsite\Emstorage\PhpSdk\Model\EmObject;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as SfObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class ObjectNormalizer extends SfObjectNormalizer
+class EmObjectNormalizer extends ObjectNormalizer
 {
     /**
      * @inheritdoc

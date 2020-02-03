@@ -1,0 +1,38 @@
+{
+  "success":true,
+  "objects":[
+    {
+      "id":"5e31b8eceb7b7822da56462f",
+      "createdAt":"2020-01-29T16:55:08.972Z",
+      "filename":"coucou.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/coucou.txt",
+      "mime":null,
+      "size":0,
+      "size_human":"0 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e31b8eceb7b7822da56462f"
+        }
+      ]
+    }
+  ],
+  "nav":{
+    "query_string":"filename=coucou.txt",
+    "sort":"_id",
+    "count":1,
+    "offset":0,
+    "limit":5
+  },
+  "links":[
+    {
+      "rel":"self",
+      "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee"
+    }
+  ]
+}

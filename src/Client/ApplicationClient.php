@@ -6,24 +6,19 @@ use Emonsite\Emstorage\PhpSdk\Model\Application;
 
 class ApplicationClient extends AbstractClient
 {
-    /**
-     * @return Application
-     */
-    public function getApplication()
+    public function getApplication(): Application
     {
-        $jsonResponse = $this->client->request('GET', '/');
+        $jsonResponse = $this->request('GET', '/');
 
-        return $this->serializer->deserialize($jsonResponse->getBody(), Application::class, 'json');
+        return $this->serializer->deserialize($jsonResponse->getContent(), Application::class, 'json');
     }
 
-    /**
-     * @param Application $application
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function updateApplication(Application $application)
+    public function updateApplication(Application $application): self
     {
-        return $this->client->put('/', [
+        $this->putJson('/', [
             'json' => $this->serializer->normalize($application)
         ]);
+
+        return $this;
     }
 }

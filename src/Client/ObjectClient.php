@@ -2,201 +2,145 @@
 
 namespace Emonsite\Emstorage\PhpSdk\Client;
 
-use Emonsite\Emstorage\PhpSdk\Exception\ResponseException;
+use Awelty\Component\Security\HmacSignatureProvider;
+use Emonsite\Emstorage\PhpSdk\Exception\EmstorageHttpException;
 use Emonsite\Emstorage\PhpSdk\Model\Collection;
 use Emonsite\Emstorage\PhpSdk\Model\EmObject;
 use Emonsite\Emstorage\PhpSdk\Model\ObjectSummaryInterface;
 use Emonsite\Emstorage\PhpSdk\Normalizer\CollectionNormalizer;
-use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\StreamInterface;
+use Symfony\Component\Mime\MimeTypes;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * TODO exception spécifique ?
- */
 class ObjectClient extends AbstractClient
 {
-    // TODO $container ?
+    private $containerId;
 
-    // TODO inject container
-
-    /**
-     * Créer un objet vide sur le cloud
-     * @param ObjectSummaryInterface $object
-     * @return ObjectSummaryInterface
-     * @throws ResponseException
-     */
-    public function createFromObject(ObjectSummaryInterface $object)
+    public function __construct(HttpClientInterface $httpClient, Serializer $serializer, HmacSignatureProvider $signatureProvider, string $containerId)
     {
-        // créer le fichier
-        try {
-            $response = $this->client->post('/objects', [
-                'json' => $this->serializer->normalize($object),
-            ]);
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        parent::__construct($httpClient, $serializer, $signatureProvider);
 
-        return $this->serializer->deserialize($response->getBody(), EmObject::class, 'json');
+        $this->containerId = $containerId;
     }
 
-    /**
-     * Remplie un objet existant dans le cloud
-     * @param ObjectSummaryInterface $objectSummary
-     * @param string | resource | StreamInterface $content
-     * @return ObjectSummaryInterface
-     * @throws ResponseException
-     */
-    public function writeInObject(ObjectSummaryInterface $objectSummary, $content)
+    public function getContainerId(): string
     {
-        try {
-            $response = $this->client->post('/objects/'.$objectSummary->getId().'/bytes', [
-                'body' => $content,
-                'headers' => [
-                    'Content-Type' => 'application/octet-stream',
-                ]
-            ]);
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
-
-        return $this->serializer->deserialize($response->getBody(), EmObject::class, 'json');
+        return $this->containerId;
     }
 
     /**
      * Créer le ficher avec son contenu dans le cloud
-     * @param string $path
-     * @param string | resource | StreamInterface $content
-     * @return ObjectSummaryInterface
+     * Envoyer $mimeType pour le forcer (et optimiser)
      */
-    public function create($path, $content)
+    public function create(string $remotePath, string $localPath, string $mimeType = null): ObjectSummaryInterface
     {
-        $object = new EmObject();
-        $object->setFilename($path);
+        // créer l'objet vide
+        $response = $this->postJson('/objects/'.$this->containerId, [
+            'filename' => $remotePath,
+            'mime' => $mimeType ?: $this->guessMimeType($localPath),
+        ]);
 
-        $objectSummary = $this->createFromObject($object);
+        // post les bytes
+        $response = $this->post('/objects/'.$this->containerId.'/'.$response->toArray()['object']['id'].'/bytes', fopen($localPath, 'r'));
 
-        return $this->writeInObject($objectSummary, $content);
+        return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
     }
 
     /**
      * Update le contenu d'un fichier qui existe déjà
-     * @param string $path
-     * @param string | resource | StreamInterface $content
-     * @return ObjectSummaryInterface
      */
-    public function update($path, $content)
+    public function update(string $remotePath, string $localPath): ObjectSummaryInterface
     {
-        $this->delete($path);
-        return $this->create($path, $content);
+        $this->delete($remotePath);
+
+        return $this->create($remotePath, $localPath);
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
      * @return Collection|ObjectSummaryInterface[]
-     * @throws ResponseException
      */
-    public function getObjects($offset = 0, $limit = 5)
+    public function getObjects(int $offset = 0, int $limit = 5): Collection
     {
-        try {
-            $response = $this->client->get('/objects', [
-                'query' => [
-                    'offset' => $offset,
-                    'limit' => $limit,
-                ],
-            ]);
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        $response = $this->get('/objects/'.$this->containerId, [
+            'query' => [
+                'offset' => $offset,
+                'limit' => $limit,
+            ],
+        ]);
 
-        return $this->serializer->deserialize($response->getBody(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        return $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
     }
 
-    /**
-     * @param $path
-     */
-    public function delete($path)
+    public function deleteFromPath(string $remotePath): void
     {
-        $object = $this->getObject($path);
+        $object = $this->getObject($remotePath);
+
         $this->deleteFromObject($object);
     }
 
-    /**
-     * @param ObjectSummaryInterface $objectSummary
-     * @return \Psr\Http\Message\ResponseInterface
-     * @throws ResponseException
-     */
-    public function deleteFromObject(ObjectSummaryInterface $objectSummary)
+    public function deleteFromObject(ObjectSummaryInterface $objectSummary): void
     {
-        try {
-            $this->client->delete('/objects/'.$objectSummary->getId());
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        $this->delete('/objects/'.$this->containerId.'/'.$objectSummary->getId());
     }
 
-    /**
-     * @param $id
-     * @return ObjectSummaryInterface
-     * @throws ResponseException
-     */
-    public function getObjectById($id)
+    public function getObjectById(string $id): ObjectSummaryInterface
     {
-        try {
-            $response = $this->client->get('/objects/'.$id);
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        $response = $this->get('/objects/'.$this->containerId.'/'.$id);
 
-        return $this->serializer->deserialize($response->getBody(), EmObject::class, 'json');
+        return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
     }
 
-    /**
-     * @param string $path
-     * @return bool
-     * @throws ResponseException
-     */
-    public function hasObject($path)
+    public function hasObject(string $remotePath): bool
     {
-        try {
-            $response = $this->client->get('/objects', [
-                'query' => [
-                    'filter' => 'filename:eq:'.$path
-                ]
-            ]);
+        $response = $this->get('/objects/'.$this->containerId, [
+            'query' => [
+                'filename' => $remotePath
+            ]
+        ]);
 
-            $response = \GuzzleHttp\json_decode($response->getBody()->getContents());
-            return (bool)$response->objects;
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        $response = \GuzzleHttp\json_decode($response->getContent());
+
+        return (bool) $response->objects;
     }
 
-    /**
-     * @param string $path
-     * @return ObjectSummaryInterface
-     * @throws ResponseException
-     */
-    public function getObject($path)
+    public function getObject(string $path): EmObject
     {
-        try {
-            $response = $this->client->get('/objects', [
-                'query' => [
-                    'filter' => 'filename:eq:'.$path
-                ]
-            ]);
-
-        } catch (RequestException $e) {
-            throw new ResponseException($e);
-        }
+        $response = $this->get('/objects/'.$this->containerId, [
+            'query' => [
+                'filename' => $path
+            ]
+        ]);
 
         /** @var Collection $objects */
-        $objects = $this->serializer->deserialize($response->getBody(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        $objects = $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
 
-        if (count($objects) != 1) {
+        if (count($objects) !== 1) {
             throw new \LogicException(sprintf('Unexpected result, 1 object expected, %s received', count($objects)));
         }
 
         return $objects[0];
+    }
+
+    /**
+     * Le mime type
+     */
+    private function guessMimeType($path): string
+    {
+        // mode "propre"
+        $mime = MimeTypes::getDefault()->guessMimeType($path);
+
+        if ($mime) {
+            return $mime;
+        }
+
+        // dernier recours, selon l'extension
+        $ext = pathinfo($path, \PATHINFO_EXTENSION);
+
+        if ($ext) {
+            return MimeTypes::getDefault()->getMimeTypes($ext)[0] ?? 'application/octet-stream';
+        }
+
+        return 'application/octet-stream';
     }
 }

@@ -1,0 +1,122 @@
+{
+  "success":true,
+  "objects":[
+    {
+      "id":"5e31b8eceb7b7822da56462f",
+      "createdAt":"2020-01-29T16:55:08.972Z",
+      "filename":"coucou.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/coucou.txt",
+      "mime":null,
+      "size":0,
+      "size_human":"0 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e31b8eceb7b7822da56462f"
+        }
+      ]
+    },
+    {
+      "id":"5e31b90fd2f518074d997316",
+      "createdAt":"2020-01-29T16:55:43.361Z",
+      "filename":"coucou2.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/coucou2.txt",
+      "mime":null,
+      "size":0,
+      "size_human":"0 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e31b90fd2f518074d997316"
+        }
+      ]
+    },
+    {
+      "id":"5e32d8c2d2f518074d997325",
+      "createdAt":"2020-01-30T13:23:14.412Z",
+      "filename":"coucou3.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/coucou3.txt",
+      "mime":null,
+      "size":0,
+      "size_human":"0 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e32d8c2d2f518074d997325"
+        }
+      ]
+    },
+    {
+      "id":"5e32da2039c877077330d189",
+      "createdAt":"2020-01-30T13:29:04.384Z",
+      "filename":"coucou4.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/coucou4.txt",
+      "mime":null,
+      "size":5,
+      "size_human":"5 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e32da2039c877077330d189"
+        }
+      ]
+    },
+    {
+      "id":"5e32daf26a097a11b2051f89",
+      "createdAt":"2020-01-30T13:32:34.958Z",
+      "filename":"404897575.txt",
+      "public_url":"emsdev-zobzob.emstorage.fr/404897575.txt",
+      "mime":null,
+      "size":0,
+      "size_human":"0 B",
+      "has_custom_data":false,
+      "has_filters":false,
+      "custom_data":{
+
+      },
+      "links":[
+        {
+          "rel":"self",
+          "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee/5e32daf26a097a11b2051f89"
+        }
+      ]
+    }
+  ],
+  "nav":{
+    "query_string":"",
+    "sort":"_id",
+    "count":9,
+    "offset":0,
+    "limit":5
+  },
+  "links":[
+    {
+      "rel":"self",
+      "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee"
+    },
+    {
+      "rel":"next",
+      "href":"https://api.emstorage.fr/objects/5e3197152c38a522dc138aee?offset=4&limit=5&sort=_id&"
+    }
+  ]
+}

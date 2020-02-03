@@ -4,12 +4,27 @@ namespace Emonsite\Emstorage\PhpSdk\Model;
 
 /**
  * Les informations d'une application EmStorage
+ * https://admin.emstorage.fr/api/models#application
+ * TODO des models pour les arrays
  */
 class Application
 {
-    const VISIBILITY_PUBLIC = 'public';
-    const VISIBILITY_DOMAIN = 'domain';
-    const VISIBILITY_API = 'API';
+    public const VISIBILITY_PUBLIC = 'public';
+    public const VISIBILITY_PRIVATE = 'private';
+
+    public const POLICY_GET = 'get';
+    public const POLICY_EXT = 'ext';
+    public const POLICY_SEG = 'seg';
+
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @var \DateTimeInterface
+     */
+    private $createdAt;
 
     /**
      * @var string
@@ -29,6 +44,11 @@ class Application
     /**
      * @var string
      */
+    private $domain;
+
+    /**
+     * @var string
+     */
     private $profilePolicy;
 
     /**
@@ -37,39 +57,14 @@ class Application
     private $profileTag;
 
     /**
-     * @var int
-     */
-    private $apikeyCount;
-
-    /**
-     * @var int
-     */
-    private $containerCount;
-
-    /**
-     * @var int
-     */
-    private $profileCount;
-
-    /**
-     * @var int
-     */
-    private $objectCount;
-
-    /**
-     * @var int
-     */
-    private $size;
-
-    /**
      * @var string
      */
-    private $sizeHuman;
+    private $publicUrl;
 
     /**
      * @var array
      */
-    private $accept = [];
+    private $stats = [];
 
     /**
      * @var array
@@ -77,282 +72,154 @@ class Application
     private $limits = [];
 
     /**
-     * @var ProfileSummary|null
+     * @var array
      */
-    private $prependProfile;
+    private $offer = [];
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
 
     /**
-     * @var ProfileSummary|null
+     * @internal
      */
-    private $appendProfile;
+    public function setId(string $id): Application
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
 
     /**
-     * @return mixed
+     * @internal
      */
-    public function getName()
+    public function setCreatedAt(string $createdAt): Application
+    {
+        $this->createdAt = new \DateTimeImmutable($createdAt);
+        return $this;
+    }
+
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     * @return Application
-     */
-    public function setName($name)
+    public function setName(string $name): Application
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param mixed $description
-     * @return Application
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): Application
     {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getVisibility()
+    public function getVisibility(): string
     {
         return $this->visibility;
     }
 
-    /**
-     * @param mixed $visibility
-     * @return Application
-     */
-    public function setVisibility($visibility)
+    public function setVisibility(string $visibility): Application
     {
         $this->visibility = $visibility;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProfilePolicy()
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(string $domain): Application
+    {
+        $this->domain = $domain;
+        return $this;
+    }
+
+    public function getProfilePolicy(): string
     {
         return $this->profilePolicy;
     }
 
-    /**
-     * @param mixed $profilePolicy
-     * @return Application
-     */
-    public function setProfilePolicy($profilePolicy)
+    public function setProfilePolicy(string $profilePolicy): Application
     {
         $this->profilePolicy = $profilePolicy;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProfileTag()
+    public function getProfileTag(): string
     {
         return $this->profileTag;
     }
 
-    /**
-     * @param mixed $profileTag
-     * @return Application
-     */
-    public function setProfileTag($profileTag)
+    public function setProfileTag(string $profileTag): Application
     {
         $this->profileTag = $profileTag;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getApikeyCount()
+    public function getPublicUrl(): string
     {
-        return $this->apikeyCount;
+        return $this->publicUrl;
     }
 
     /**
-     * @param mixed $apikeyCount
-     * @return Application
+     * @internal
      */
-    public function setApikeyCount($apikeyCount)
+    public function setPublicUrl(string $publicUrl): Application
     {
-        $this->apikeyCount = $apikeyCount;
+        $this->publicUrl = $publicUrl;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContainerCount()
+    public function getStats(): array
     {
-        return $this->containerCount;
+        return $this->stats;
     }
 
     /**
-     * @param mixed $containerCount
-     * @return Application
+     * @internal
      */
-    public function setContainerCount($containerCount)
+    public function setStats(array $stats): Application
     {
-        $this->containerCount = $containerCount;
+        $this->stats = $stats;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProfileCount()
-    {
-        return $this->profileCount;
-    }
-
-    /**
-     * @param mixed $profileCount
-     * @return Application
-     */
-    public function setProfileCount($profileCount)
-    {
-        $this->profileCount = $profileCount;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getObjectCount()
-    {
-        return $this->objectCount;
-    }
-
-    /**
-     * @param mixed $objectCount
-     * @return Application
-     */
-    public function setObjectCount($objectCount)
-    {
-        $this->objectCount = $objectCount;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * @param mixed $size
-     * @return Application
-     */
-    public function setSize($size)
-    {
-        $this->size = $size;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSizeHuman()
-    {
-        return $this->sizeHuman;
-    }
-
-    /**
-     * @param mixed $sizeHuman
-     * @return Application
-     */
-    public function setSizeHuman($sizeHuman)
-    {
-        $this->sizeHuman = $sizeHuman;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAccept()
-    {
-        return $this->accept;
-    }
-
-    /**
-     * @param array $accept
-     * @return Application
-     */
-    public function setAccept($accept)
-    {
-        $this->accept = $accept;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLimits()
+    public function getLimits(): array
     {
         return $this->limits;
     }
 
-    /**
-     * @param mixed $limits
-     * @return Application
-     */
-    public function setLimits($limits)
+    public function setLimits(array $limits): Application
     {
         $this->limits = $limits;
         return $this;
     }
 
-    /**
-     * @return ProfileSummary|null
-     */
-    public function getPrependProfile()
+    public function getOffer(): array
     {
-        return $this->prependProfile;
+        return $this->offer;
     }
 
     /**
-     * @param mixed $prependProfile
-     * @return Application
+     * @internal
      */
-    public function setPrependProfile($prependProfile = null)
+    public function setOffer(array $offer): Application
     {
-        $this->prependProfile = $prependProfile;
-        return $this;
-    }
-
-    /**
-     * @return ProfileSummary|null
-     */
-    public function getAppendProfile()
-    {
-        return $this->appendProfile;
-    }
-
-    /**
-     * @param mixed $appendProfile
-     * @return Application
-     */
-    public function setAppendProfile($appendProfile = null)
-    {
-        $this->appendProfile = $appendProfile;
+        $this->offer = $offer;
         return $this;
     }
 }

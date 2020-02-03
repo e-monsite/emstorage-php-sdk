@@ -9,6 +9,8 @@ interface ObjectSummaryInterface
      */
     public function getId();
 
+    public function getCreatedAt();
+
     /**
      * @return string
      */
@@ -34,9 +36,9 @@ interface ObjectSummaryInterface
      */
     public function getSizeHuman();
 
-    /**
-     * @return array
-     */
-    public function getMeta();
+    public function getCustomDatas();
 
+    public function hasCustomDatas();
+
+    public function getFilters();
 }

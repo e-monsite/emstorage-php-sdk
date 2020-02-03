@@ -4,6 +4,7 @@ namespace Emonsite\Emstorage\PhpSdk\Bridge;
 
 use Awelty\Component\Security\HmacSignatureProvider;
 use Emonsite\Emstorage\PhpSdk\Client;
+use Emonsite\Emstorage\PhpSdk\Emstorage;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
@@ -28,10 +29,8 @@ class SilexServiceProvider implements ServiceProviderInterface, BootableProvider
     {
         // create services
         foreach ($app['emstorage.applications'] as $name => $config) {
-            $authenticator = new HmacSignatureProvider($config['public_key'], $config['private_key'], 'sha1');
-
-            $app['emstorage.'.$name] = function (Container $container) use ($authenticator) {
-                return new Client($authenticator, $container['emstorage.guzzle.options']);
+            $app['emstorage.'.$name] = function (Container $container) use ($config) {
+                return new Emstorage($config['public_key'], $config['private_key']);
             };
         }
     }
