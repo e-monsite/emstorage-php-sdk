@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Emonsite\Emstorage\PhpSdk;
 
 use Awelty\Component\Security\HmacSignatureProvider;

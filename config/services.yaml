@@ -1,0 +1,24 @@
+parameters:
+    env(EMSTORAGE_PUBLIC_KEY): ''
+    env(EMSTORAGE_PRIVATE_KEY): ''
+    env(EMSTORAGE_CONTAINER_ID): ''
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Emonsite\Emstorage\PhpSdk\Emstorage:
+        arguments:
+            $publicKey: '%env(EMSTORAGE_PUBLIC_KEY)%'
+            $privateKey: '%env(EMSTORAGE_PRIVATE_KEY)%'
+            $httpClient: # dont autowire that in prod, let the lib make his client
+
+    # Allow to directly inject an object client with the proper containerId
+    Emonsite\Emstorage\PhpSdk\Client\ObjectClient:
+        factory: ['@Emonsite\Emstorage\PhpSdk\Emstorage', 'objects']
+        arguments:
+            $containerId: '%env(EMSTORAGE_CONTAINER_ID)%'
+
+    # TODO only if flysystem bundle installed ?
+    Emonsite\Emstorage\PhpSdk\Bridge\FlysystemAdapter: ~
