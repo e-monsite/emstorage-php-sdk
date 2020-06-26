@@ -52,10 +52,20 @@ class ObjectClient extends AbstractClient
             'mime' => $mimeType ?: $this->guessMimeType($remotePath),
         ]);
 
+        try {
+            $response->getContent();
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
+
         // post les bytes
         $response = $this->post('/objects/'.$this->containerId.'/'.$response->toArray()['object']['id'].'/bytes', $resource);
 
-        return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
+        try {
+            return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
     }
 
     /**
@@ -85,7 +95,11 @@ class ObjectClient extends AbstractClient
             ],
         ]);
 
-        return $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        try {
+            return $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
     }
 
     public function deleteFromPath(string $remotePath): void
@@ -104,7 +118,11 @@ class ObjectClient extends AbstractClient
     {
         $response = $this->get('/objects/'.$this->containerId.'/'.$id);
 
-        return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
+        try {
+            return $this->serializer->deserialize($response->getContent(), EmObject::class, 'json');
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
     }
 
     public function hasObject(string $remotePath): bool
@@ -115,7 +133,11 @@ class ObjectClient extends AbstractClient
             ]
         ]);
 
-        $response = $response->toArray();
+        try {
+            $response = $response->toArray();
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
 
         return (bool) $response['objects'];
     }
@@ -128,8 +150,12 @@ class ObjectClient extends AbstractClient
             ]
         ]);
 
-        /** @var Collection $objects */
-        $objects = $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        try {
+            /** @var Collection $objects */
+            $objects = $this->serializer->deserialize($response->getContent(), EmObject::class.'[]', 'json', [CollectionNormalizer::ELEMENTS_KEY => 'objects']);
+        } catch (HttpExceptionInterface $e) {
+            throw new EmstorageHttpException($e);
+        }
 
         if (count($objects) !== 1) {
             throw new \LogicException(sprintf('Unexpected result, 1 object expected, %s received', count($objects)));
