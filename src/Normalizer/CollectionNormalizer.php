@@ -18,7 +18,7 @@ class CollectionNormalizer extends ArrayDenormalizer
     /**
      * @inheritdoc
      */
-    public function denormalize($data, $class, $format = null, array $context = array())
+    public function denormalize($data, string $type, $format = null, array $context = []): array
     {
         $collection = new Collection();
 
