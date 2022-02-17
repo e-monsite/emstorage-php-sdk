@@ -25,7 +25,13 @@ class CollectionNormalizer extends ArrayDenormalizer
         $collection->setNav($data['nav']);
         $collection->setLinks($data['links']);
         $collection->setElements(parent::denormalize($data[$context[self::ELEMENTS_KEY]], $type, $format, $context));
+        
+        $data = [];
 
-        return $collection;
+        foreach ($collection as $key => $item) {
+            $data[$key] = $item;
+        }
+
+        return $data;
     }
 }
