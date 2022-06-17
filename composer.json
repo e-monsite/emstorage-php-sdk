@@ -7,7 +7,7 @@
     }
   ],
   "require": {
-    "php": "^7.3",
+    "php": "^8.0",
     "ext-json": "*",
     "awelty/security": "dev-master",
     "symfony/http-client": "^5.0",
