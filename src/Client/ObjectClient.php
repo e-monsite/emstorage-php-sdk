@@ -83,10 +83,7 @@ class ObjectClient extends AbstractClient
         return $this->createStream($remotePath, $resource);
     }
 
-    /**
-     * @return Collection|ObjectSummaryInterface[]
-     */
-    public function getObjects(int $offset = 0, int $limit = 5): Collection
+    public function getObjects(int $offset = 0, int $limit = 5)
     {
         $response = $this->get('/objects/'.$this->containerId, [
             'query' => [
