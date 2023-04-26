@@ -11,11 +11,11 @@
     "ext-json": "*",
     "awelty/security": "dev-master",
     "symfony/http-client": "^5.0",
-    "symfony/mime": "^5.0",
-    "symfony/serializer": "^5.0",
-    "symfony/property-access": "^5.0",
-    "symfony/property-info": "^5.0",
-    "symfony/cache": "^5.0"
+    "symfony/mime": "6.0.*",
+    "symfony/serializer": "6.0.*",
+    "symfony/property-access": "6.0.*",
+    "symfony/property-info": "6.0.*",
+    "symfony/cache": "6.0.*"
   },
   "suggest": {
     "league/flysystem": "For using Flysystem adapter"
