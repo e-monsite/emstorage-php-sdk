@@ -10,7 +10,7 @@
     "php": "^8.0",
     "ext-json": "*",
     "awelty/security": "dev-master",
-    "symfony/http-client": "^5.0",
+    "symfony/http-client": "6.0.*",
     "symfony/mime": "6.0.*",
     "symfony/serializer": "6.0.*",
     "symfony/property-access": "6.0.*",
