@@ -2,7 +2,7 @@
 
 namespace Emonsite\Emstorage\PhpSdk\Bridge;
 
-use Awelty\Component\Security\HmacSignatureProvider;
+use Emonsite\Emstorage\PhpSdk\AweltySecurity\HmacSignatureProvider;
 use Emonsite\Emstorage\PhpSdk\Client;
 use Emonsite\Emstorage\PhpSdk\Emstorage;
 use Pimple\Container;

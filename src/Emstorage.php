@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Emonsite\Emstorage\PhpSdk;
 
-use Awelty\Component\Security\HmacSignatureProvider;
+use Emonsite\Emstorage\PhpSdk\AweltySecurity\HmacSignatureProvider;
 use Emonsite\Emstorage\PhpSdk\Client\ApplicationClient;
 use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
 use Emonsite\Emstorage\PhpSdk\Normalizer\ApplicationNormalizer;

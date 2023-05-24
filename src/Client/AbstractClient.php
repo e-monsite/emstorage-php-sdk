@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Emonsite\Emstorage\PhpSdk\Client;
 
-use Awelty\Component\Security\HmacSignatureProvider;
+use Emonsite\Emstorage\PhpSdk\AweltySecurity\HmacSignatureProvider;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
