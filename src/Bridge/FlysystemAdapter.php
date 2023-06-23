@@ -147,7 +147,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function deleteDirectory($dirname)
+    public function deleteDirectory(string $dirname): void
     {
         throw new \Exception('deleteDir is not supported by emstorage');
     }
@@ -160,7 +160,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function createDirectory($dirname, Config $config)
+    public function createDirectory(string $dirname, Config $config)
     {
         throw new \Exception('createDir is not supported by emstorage');
     }
