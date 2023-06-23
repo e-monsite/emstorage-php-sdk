@@ -261,7 +261,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @param string $path
      */
-    public function mimeType(string $path)
+    public function mimeType(string $path): FileAttributes
     {
         // TODO: Implement mimeType() method.
     }
