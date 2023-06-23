@@ -34,9 +34,9 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false false on failure file meta data on success
      */
-    public function write($path, $contents, Config $config)
+    public function write($path, $contents, Config $config): void
     {
-        return $this->writeStream($path, $this->createStream($contents), $config);
+        $this->writeStream($path, $this->createStream($contents), $config);
     }
 
     /**
@@ -48,11 +48,15 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false false on failure file meta data on success
      */
-    public function writeStream($path, $resource, Config $config)
+    public function writeStream($path, $resource, Config $config): void
     {
         $object = $this->objectClient->createStream($path, $resource, $config->get('mime'));
 
-        return ['path' => $object->getFilename()];
+        try {
+            $object->getFilename();
+        } catch (\Throwable $exception) {
+            throw new \Exception($exception->getMessage());
+        }
     }
 
     /**
