@@ -162,7 +162,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false file meta data
      */
-    public function setVisibility($path, $visibility)
+    public function setVisibility($path, $visibility): void
     {
         throw new \Exception('setVisibility is not supported by emstorage');
     }
@@ -210,7 +210,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function listContents($directory = '', $recursive = false)
+    public function listContents($directory = '', $recursive = false): iterable
     {
         throw new \Exception('listContents is not supported by emstorage');
     }
