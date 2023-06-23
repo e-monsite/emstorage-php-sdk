@@ -188,7 +188,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function read($path): void
+    public function read($path): string
     {
         throw new \Exception('Implement read in emstorage client !');
     }
@@ -200,7 +200,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function readStream($path): void
+    public function readStream($path)
     {
         throw new \Exception('Implement readStream in emstorage client !');
     }
