@@ -27,6 +27,6 @@
   "require-dev": {
     "phpunit/phpunit": "^8.5",
     "symfony/var-dumper": "^6.2",
-    "league/flysystem": "1.0.57"
+    "league/flysystem": "^1.0"
   }
 }
