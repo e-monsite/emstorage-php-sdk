@@ -122,13 +122,11 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function delete($path)
+    public function delete($path): void
     {
         if ($this->has($path)) {
             $this->objectClient->deleteFromPath($path);
         }
-
-        return true;
     }
 
     /**
