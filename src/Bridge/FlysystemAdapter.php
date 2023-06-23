@@ -6,6 +6,7 @@ use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
 use Emonsite\Emstorage\PhpSdk\Emstorage;
 use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
 use League\Flysystem\Config;
+use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use Psr\Http\Message\StreamInterface;
 
@@ -23,6 +24,11 @@ class FlysystemAdapter implements FilesystemAdapter
     public function __construct(ObjectClient $objectClient)
     {
         $this->objectClient = $objectClient;
+    }
+
+    public function fileExists(string $path): bool
+    {
+        throw new \Exception('implement copy (or move) in Emstorage client !');
     }
 
     /**
@@ -102,6 +108,11 @@ class FlysystemAdapter implements FilesystemAdapter
         throw new \Exception('implement rename in Emstorage client !');
     }
 
+    public function move(string $source, string $destination, Config $config): void
+    {
+        // TODO: Implement move() method.
+    }
+
     /**
      * Copy a file.
      *
@@ -136,7 +147,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function deleteDir($dirname)
+    public function deleteDirectory($dirname)
     {
         throw new \Exception('deleteDir is not supported by emstorage');
     }
@@ -149,7 +160,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function createDir($dirname, Config $config)
+    public function createDirectory($dirname, Config $config)
     {
         throw new \Exception('createDir is not supported by emstorage');
     }
@@ -205,10 +216,8 @@ class FlysystemAdapter implements FilesystemAdapter
      * Get all the meta data of a file or directory.
      *
      * @param string $path
-     *
-     * @return array|false
      */
-    public function listContents(string $directory = '', bool $recursive = false): iterable
+    public function listContents(string $path, bool $deep): iterable
     {
         throw new \Exception('listContents is not supported by emstorage');
     }
@@ -241,12 +250,30 @@ class FlysystemAdapter implements FilesystemAdapter
      * Get the mimetype of a file.
      *
      * @param string $path
-     *
-     * @return array|false
      */
-    public function getMimetype($path)
+    public function getMimetype(string $path)
     {
         // TODO: Implement getMimetype() method.
+    }
+
+    /**
+     * Get the mimetype of a file.
+     *
+     * @param string $path
+     */
+    public function mimeType(string $path)
+    {
+        // TODO: Implement mimeType() method.
+    }
+
+    public function lastModified(string $path): FileAttributes
+    {
+        // TODO: Implement lastModified() method.
+    }
+
+    public function fileSize(string $path): FileAttributes
+    {
+        // TODO: Implement fileSize() method.
     }
 
     /**
@@ -261,6 +288,11 @@ class FlysystemAdapter implements FilesystemAdapter
         // TODO: Implement getTimestamp() method.
     }
 
+    public function visibility(string $path): FileAttributes
+    {
+        throw new \Exception('getVisibility is not supported by emstorage');
+    }
+
     /**
      * Get the visibility of a file.
      *
@@ -268,7 +300,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function getVisibility($path)
+    public function getVisibility(string $path)
     {
         throw new \Exception('getVisibility is not supported by emstorage');
     }
