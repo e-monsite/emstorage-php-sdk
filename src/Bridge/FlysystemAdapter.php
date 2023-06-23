@@ -160,7 +160,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function createDirectory(string $dirname, Config $config)
+    public function createDirectory(string $dirname, Config $config): void
     {
         throw new \Exception('createDir is not supported by emstorage');
     }
