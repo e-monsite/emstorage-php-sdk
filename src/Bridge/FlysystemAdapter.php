@@ -97,7 +97,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function rename($path, $newpath)
+    public function rename($path, $newpath): void
     {
         throw new \Exception('implement rename in Emstorage client !');
     }
@@ -110,7 +110,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function copy($path, $newpath)
+    public function copy($path, $newpath): void
     {
         throw new \Exception('implement copy (or move) in Emstorage client !');
     }
@@ -188,7 +188,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function read($path)
+    public function read($path): void
     {
         throw new \Exception('Implement read in emstorage client !');
     }
@@ -200,7 +200,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function readStream($path)
+    public function readStream($path): void
     {
         throw new \Exception('Implement readStream in emstorage client !');
     }
