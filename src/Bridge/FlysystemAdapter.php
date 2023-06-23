@@ -26,11 +26,6 @@ class FlysystemAdapter implements FilesystemAdapter
         $this->objectClient = $objectClient;
     }
 
-    public function fileExists(string $path): bool
-    {
-        throw new \Exception('implement copy (or move) in Emstorage client !');
-    }
-
     /**
      * Write a new file.
      *
@@ -61,8 +56,14 @@ class FlysystemAdapter implements FilesystemAdapter
         try {
             $object->getFilename();
         } catch (\Throwable $exception) {
+            dd($exception);
             throw new \Exception($exception->getMessage());
         }
+    }
+
+    public function fileExists(string $path): bool
+    {
+        throw new \Exception('implement copy (or move) in Emstorage client !');
     }
 
     /**
