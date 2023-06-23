@@ -56,7 +56,6 @@ class FlysystemAdapter implements FilesystemAdapter
         try {
             $object->getFilename();
         } catch (\Throwable $exception) {
-            dd($exception);
             throw new \Exception($exception->getMessage());
         }
     }
