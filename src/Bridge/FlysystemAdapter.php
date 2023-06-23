@@ -5,15 +5,15 @@ namespace Emonsite\Emstorage\PhpSdk\Bridge;
 use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
 use Emonsite\Emstorage\PhpSdk\Emstorage;
 use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
+use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
  * TODO throw AdapterException quand elle existera..
  * https://github.com/thephpleague/flysystem/issues/620
  */
-class FlysystemAdapter implements AdapterInterface
+class FlysystemAdapter implements FilesystemInterface
 {
     /**
      * @var ObjectClient
