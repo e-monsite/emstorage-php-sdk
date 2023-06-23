@@ -110,7 +110,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function copy($path, $newpath): void
+    public function copy(string $source, string $destination, Config $config): void
     {
         throw new \Exception('implement copy (or move) in Emstorage client !');
     }
@@ -122,7 +122,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return bool
      */
-    public function delete($path): void
+    public function delete(string $path): void
     {
         if ($this->has($path)) {
             $this->objectClient->deleteFromPath($path);
@@ -159,10 +159,8 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @param string $path
      * @param string $visibility
-     *
-     * @return array|false file meta data
      */
-    public function setVisibility($path, $visibility): void
+    public function setVisibility(string $path, string $visibility): void
     {
         throw new \Exception('setVisibility is not supported by emstorage');
     }
@@ -186,7 +184,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function read($path): string
+    public function read(string $path): string
     {
         throw new \Exception('Implement read in emstorage client !');
     }
@@ -198,7 +196,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function readStream($path)
+    public function readStream(string $path)
     {
         throw new \Exception('Implement readStream in emstorage client !');
     }
@@ -210,7 +208,7 @@ class FlysystemAdapter implements FilesystemAdapter
      *
      * @return array|false
      */
-    public function listContents($directory = '', $recursive = false): iterable
+    public function listContents(string $directory = '', bool $recursive = false): iterable
     {
         throw new \Exception('listContents is not supported by emstorage');
     }
