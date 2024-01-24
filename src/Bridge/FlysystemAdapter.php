@@ -3,274 +3,63 @@
 namespace Emonsite\Emstorage\PhpSdk\Bridge;
 
 use Emonsite\Emstorage\PhpSdk\Client\ObjectClient;
-use Emonsite\Emstorage\PhpSdk\Emstorage;
-use Emonsite\Emstorage\PhpSdk\Exception\EmStorageException;
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
-use Psr\Http\Message\StreamInterface;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemAdapter;
 
 /**
  * TODO throw AdapterException quand elle existera..
  * https://github.com/thephpleague/flysystem/issues/620
  */
-class FlysystemAdapter implements AdapterInterface
+class FlysystemAdapter implements FilesystemAdapter
 {
-    /**
-     * @var ObjectClient
-     */
-    private $objectClient;
+    private ObjectClient $objectClient;
 
     public function __construct(ObjectClient $objectClient)
     {
         $this->objectClient = $objectClient;
     }
 
-    /**
-     * Write a new file.
-     *
-     * @param string $path
-     * @param string $contents
-     * @param Config $config   Config object
-     *
-     * @return array|false false on failure file meta data on success
-     */
-    public function write($path, $contents, Config $config)
+    public function write(string $path, string $contents, Config $config): void
     {
-        return $this->writeStream($path, $this->createStream($contents), $config);
+        $this->writeStream($path, $this->createStream($contents), $config);
     }
 
-    /**
-     * Write a new file using a stream.
-     *
-     * @param string   $path
-     * @param resource $resource
-     * @param Config   $config   Config object
-     *
-     * @return array|false false on failure file meta data on success
-     */
-    public function writeStream($path, $resource, Config $config)
+    public function writeStream(string $path, $contents, Config $config): void
     {
-        $object = $this->objectClient->createStream($path, $resource, $config->get('mime'));
-
-        return ['path' => $object->getFilename()];
+        $this->objectClient->createStream($path, $contents, $config->get('mime'));
     }
 
-    /**
-     * Update a file.
-     *
-     * @param string $path
-     * @param string $contents
-     * @param Config $config   Config object
-     *
-     * @return array|false false on failure file meta data on success
-     */
-    public function update($path, $contents, Config $config)
-    {
-        return $this->updateStream($path, $this->createStream($contents), $config);
-    }
-
-    /**
-     * Update a file using a stream.
-     *
-     * @param string $path
-     * @param resource $resource
-     * @param Config $config Config object
-     *
-     * @return array|false false on failure file meta data on success
-     */
-    public function updateStream($path, $resource, Config $config)
-    {
-        $object = $this->objectClient->updateStream($path, $resource);
-
-        return ['path' => $object->getFilename()];
-    }
-
-    /**
-     * Rename a file.
-     *
-     * @param string $path
-     * @param string $newpath
-     *
-     * @return bool
-     */
-    public function rename($path, $newpath)
-    {
-        throw new \Exception('implement rename in Emstorage client !');
-    }
-
-    /**
-     * Copy a file.
-     *
-     * @param string $path
-     * @param string $newpath
-     *
-     * @return bool
-     */
-    public function copy($path, $newpath)
+    public function copy(string $source, string $destination, Config $config): void
     {
         throw new \Exception('implement copy (or move) in Emstorage client !');
     }
 
-    /**
-     * Delete a file.
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    public function delete($path)
+    public function delete(string $path): void
     {
-        if ($this->has($path)) {
+        if ($this->fileExists($path)) {
             $this->objectClient->deleteFromPath($path);
         }
-
-        return true;
     }
 
-    /**
-     * Delete a directory.
-     *
-     * @param string $dirname
-     *
-     * @return bool
-     */
-    public function deleteDir($dirname)
-    {
-        throw new \Exception('deleteDir is not supported by emstorage');
-    }
-
-    /**
-     * Create a directory.
-     *
-     * @param string $dirname directory name
-     * @param Config $config
-     *
-     * @return array|false
-     */
-    public function createDir($dirname, Config $config)
-    {
-        throw new \Exception('createDir is not supported by emstorage');
-    }
-
-    /**
-     * Set the visibility for a file.
-     *
-     * @param string $path
-     * @param string $visibility
-     *
-     * @return array|false file meta data
-     */
-    public function setVisibility($path, $visibility)
+    public function setVisibility(string $path, string $visibility): void
     {
         throw new \Exception('setVisibility is not supported by emstorage');
     }
 
-    /**
-     * Check whether a file exists.
-     *
-     * @param string $path
-     *
-     * @return array|bool|null
-     */
-    public function has($path)
-    {
-        return $this->objectClient->hasObject($path);
-    }
-
-    /**
-     * Read a file.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function read($path)
+    public function read(string $path): string
     {
         throw new \Exception('Implement read in emstorage client !');
     }
 
-    /**
-     * Read a file as a stream.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function readStream($path)
+    public function readStream(string $path)
     {
         throw new \Exception('Implement readStream in emstorage client !');
     }
 
-    /**
-     * Get all the meta data of a file or directory.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function listContents($directory = '', $recursive = false)
+    public function listContents(string $path, bool $deep): iterable
     {
         throw new \Exception('listContents is not supported by emstorage');
-    }
-
-    /**
-     * Get all the meta data of a file or directory.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function getMetadata($path)
-    {
-        // TODO: Implement getMetadata() method.
-    }
-
-    /**
-     * Get the size of a file.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function getSize($path)
-    {
-        // TODO: Implement getSize() method.
-    }
-
-    /**
-     * Get the mimetype of a file.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function getMimetype($path)
-    {
-        // TODO: Implement getMimetype() method.
-    }
-
-    /**
-     * Get the timestamp of a file.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function getTimestamp($path)
-    {
-        // TODO: Implement getTimestamp() method.
-    }
-
-    /**
-     * Get the visibility of a file.
-     *
-     * @param string $path
-     *
-     * @return array|false
-     */
-    public function getVisibility($path)
-    {
-        throw new \Exception('getVisibility is not supported by emstorage');
     }
 
     /**
@@ -283,5 +72,45 @@ class FlysystemAdapter implements AdapterInterface
         rewind($stream);
 
         return $stream;
+    }
+
+    public function fileExists(string $path): bool
+    {
+        return $this->objectClient->hasObject($path);
+    }
+
+    public function deleteDirectory(string $path): void
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function createDirectory(string $path, Config $config): void
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function visibility(string $path): FileAttributes
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function mimeType(string $path): FileAttributes
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function lastModified(string $path): FileAttributes
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function fileSize(string $path): FileAttributes
+    {
+        throw new \Exception('Implement it in emstorage client !');
+    }
+
+    public function move(string $source, string $destination, Config $config): void
+    {
+        throw new \Exception('Implement it in emstorage client !');
     }
 }
